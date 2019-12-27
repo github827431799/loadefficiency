@@ -7,7 +7,7 @@ public class ExtractToStaging {
 	
 	public String load(LoadEfficiency loadEfficiency) throws SQLException {
 
-		//variables fro connection and SQL scripts 
+		//variables for connection and SQL scripts 
 		Statement statementInsert = null;		
 		String sqlLoadEfficiency = null;
 		

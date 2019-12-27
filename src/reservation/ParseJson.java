@@ -8,7 +8,7 @@ import com.google.gson.stream.JsonReader;
 
 public class ParseJson {	
 		
-	//Parse XML using StAX(Streaming API for XML)
+	//Parse JSON using Gson(Google open source for parsing JSON)
 	public String getReservation(InputStream inputStream) throws IOException {		
 			
 		//Db table object
@@ -312,6 +312,6 @@ public class ParseJson {
 
 		return result;
 		
-	}//getOrder method
+	}//getReservation method
 
 }

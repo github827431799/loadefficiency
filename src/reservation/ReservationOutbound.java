@@ -10,10 +10,10 @@ import java.util.Date;
 
 public class ReservationOutbound {
 	
-	//Statistics for orders inserted into DB
+	//Statistics for reservation inserted into DB
 	public static Integer loadEfficiencyCount = 0;
 	
-	//Timestamp for generating order
+	//Timestamp for generating reservation
 	public static String dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());    
 	
 	
@@ -21,12 +21,11 @@ public class ReservationOutbound {
 		
 		// TODO Auto-generated method stub
 		//**********************
-		//Call OTMS web service by POST(HttpURLConnection). 
-		//Send XML(include user/password) to server using getOutputStream.
-		//Get response with XML using getInputStream.
-		//URL: https://login.otms.cn/ws/orderOutbound
-		//Method: POST
-		//content-type: application/xml;charset=UTF-8
+		//Call OTMS web service by GET(HttpURLConnection). 
+		//Get response with JSON using getInputStream.
+		//URL:
+		//Method: GET
+		//content-type: application/json;charset=UTF-8
 		URL url = null;
 		HttpURLConnection connection = null;
 		OutputStream outputStream = null;

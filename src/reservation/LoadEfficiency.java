@@ -3,7 +3,7 @@ package reservation;
 import java.util.ArrayList;
 import java.util.List;
 
-//Model OrderEvent
+//Model LoadEfficiency
 public class LoadEfficiency {	
 
 	private List<String> companyName = new ArrayList<String>();
