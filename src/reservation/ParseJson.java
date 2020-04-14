@@ -293,7 +293,9 @@ public class ParseJson {
 					jsonReader.skipValue();
 				}//result				
 			}//while1
-			jsonReader.endObject();//end1						
+			jsonReader.endObject();//end1				
+
+			System.out.println("=================Parsed"); 
 			
             //Insert into DB
 			extractToStaging = new ExtractToStaging();

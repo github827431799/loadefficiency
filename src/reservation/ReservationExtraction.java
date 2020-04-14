@@ -8,6 +8,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.io.InputStream;
@@ -35,6 +37,8 @@ public class ReservationExtraction {
 		InputStream inputStream = null;
 		Properties props = null;
 		Statement statementQuery = null;
+		Statement statementInsert = null;
+		Statement statementPreUpdate = null;
 		String result = null;
 		String resBegindate = null;
 		String resEnddate = null;
@@ -81,17 +85,40 @@ public class ReservationExtraction {
 			conn.setAutoCommit(false);
 			System.out.println("=================Connected");
 			
-			statementQuery = conn.createStatement();			
+			statementQuery = conn.createStatement();	
+			statementInsert = conn.createStatement();
+			statementPreUpdate = conn.createStatement();
 			
 			//Extracting reservation into DB from web service of OTMS
 			//Get max date
-			ResultSet rs = statementQuery.executeQuery("SELECT DATE_FORMAT(IFNULL(DATE_ADD(MAX(resEnddate),INTERVAL 1 DAY),NOW()),'%Y-%m-%d') AS resEnddate FROM EX_LoadEfficiency;");
+			ResultSet rs = statementQuery.executeQuery("SELECT DATE_FORMAT(DATE_ADD(NOW(),INTERVAL -7 DAY),'%Y-%m-%d') AS resEnddate;");
 			while(rs.next()) {
-				resEnddate = rs.getString("resEnddate");
-				resBegindate = resEnddate;
-			}
-			
+				resBegindate =  rs.getString("resEnddate");
+				resEnddate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+				
+			}			
 			System.out.println("=================GotMaxDate");
+			
+			//Delete
+			statementInsert.executeUpdate("INSERT INTO EX_LoadEfficiency_His(companyName,whName,platformName,resNumber,resStatus,resReview,resType,resCode," + 
+					"resBegindate,resEnddate,truckName,driverName,driverMobile,markInsert,markMov,markCancel," + 
+					"markRefuse,markLate,markDel,signDate,callDate,admissionDate,completeDate,appearanceDate," + 
+					"waitHour,workHour,totalWaitHour,factoryHour,resReason,resRemarks,modifyRemarks,createId," + 
+					"createDate,modifyId,modifyDate,totalQuantity,totalWeight,totalVolume,grossWeight,metaComment," + 
+					"metaIsEffective,metaEffectiveFrom,metaEffectiveTo,metaSource,metaCreateOn,metaCreatedBy," + 
+					"metaUpdateOn,metaUpdateBy) SELECT companyName,whName,platformName,resNumber,resStatus,resReview,resType,resCode," +  
+					"resBegindate,resEnddate,truckName,driverName,driverMobile,markInsert,markMov,markCancel," + 
+					"markRefuse,markLate,markDel,signDate,callDate,admissionDate,completeDate,appearanceDate," +  
+					"waitHour,workHour,totalWaitHour,factoryHour,resReason,resRemarks,modifyRemarks,createId," +  
+					"createDate,modifyId,modifyDate,totalQuantity,totalWeight,totalVolume,grossWeight,metaComment," + 
+					"metaIsEffective,metaEffectiveFrom,metaEffectiveTo,metaSource,'" + ReservationOutbound.dateTime + "',metaCreatedBy," + 
+					"metaUpdateOn,metaUpdateBy FROM EX_LoadEfficiency " + 
+			        "WHERE DATE_FORMAT(resEnddate, '%Y-%m-%d') >= '" + resBegindate + "' AND DATE_FORMAT(resEnddate, '%Y-%m-%d') <= '" + resEnddate + "';");
+			statementPreUpdate.executeUpdate("DELETE FROM EX_LoadEfficiency WHERE DATE_FORMAT(resEnddate, '%Y-%m-%d') >= '" + resBegindate + "' AND" + " DATE_FORMAT(resEnddate, '%Y-%m-%d') <= '" + resEnddate + "';");
+			conn.commit();
+			System.out.println("=================Deleted");
+			
+			
 			//Extracting
 			otmsUrl = args[0] + "?BeginTime=" + resBegindate + "&EndTime=" + resEnddate + "&AppKey=dvwbg5qi&AppSecret=HxX7Gust35QASqjQ";
 			reservationOutbound = new ReservationOutbound();						
